@@ -3,33 +3,32 @@ version: "3.8"
 name: owlcms
 
 services:
-  db:
-    image: "postgres:latest"
-    env_file:
-      - .env
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    restart: unless-stopped
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'",
-        ]
-      interval: 10s
-      retries: 5
+  # db:
+  #   image: "postgres:16"
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data/
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test:
+  #       [
+  #         "CMD-SHELL",
+  #         "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'",
+  #       ]
+  #     interval: 10s
+  #     retries: 5
 
   app:
     image: "owlcms/owlcms:stable"
     restart: unless-stopped
     ports:
       - 8080:8080
-    depends_on:
-      db:
-        condition: service_healthy
+    volumes:
+      - owlcms_db:/database/
 
 volumes:
-  postgres_data:
+  owlcms_db:
 
 networks:
   outside:
